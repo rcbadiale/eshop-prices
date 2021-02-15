@@ -1,5 +1,6 @@
 from algoliasearch.search_client import SearchClient
 
+# Nintendo data from Nintendo Game Store
 APP_ID = "U3B6GR4UA3"
 API_KEY = "c4da8be7fd29f0f5bfa42920b0a99dc7"
 INDEX_NAME = "ncom_game_en_us"

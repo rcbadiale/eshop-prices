@@ -38,23 +38,25 @@ def main():
     """
     cc = CurrencyConverter(CURRENCY)
     db = DB(DB_PATH)
-    db.drop_table('backup')
     search = Search()
-    search.all_games()
 
+    print('Searching all games...')
+    search.all_games()
     games = [Game(**each) for each in search.games_list]
     for store in STORES_GET:
-        print(f'Getting prices from {store}...')
+        print(f'Getting prices from {store} store...')
         get_price_store(games, store)
 
+    to_add = []
+    print('Converting prices and adding taxes...')
     for game in games:
-        print('Converting...')
         convert_currencies(cc, game)
-        print('IOF...')
         multiply_iof(game)
-        print('Saving...')
-        db.insert(game.__dict__)
-        print('Saved!')
+        to_add.append(game.__dict__)
+
+    print('Saving to DB...')
+    db.insert_multiple(to_add)
+    print('Saved!')
 
     if db.clone.all() != db.table.all():
         print('Sending email...')

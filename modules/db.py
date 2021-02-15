@@ -23,6 +23,7 @@ class DB():
         self.table = self._db.table(self._table_name)
         self._query = Query()
         self.clone_table(backup_table)
+        self.drop_table(self._table_name)
 
     def insert(self, data: dict):
         """
@@ -33,6 +34,15 @@ class DB():
                 exists it will be updated.
         """
         self.table.upsert(data, self._query.title == data.get('title'))
+
+    def insert_multiple(self, data: list):
+        """
+        Insert multiple lines of data into the DB
+
+        args:
+            data (list): data to be added to the DB
+        """
+        self.table.insert_multiple(data)
 
     def find(self, key: str, item: Any):
         """
