@@ -58,9 +58,17 @@ def main():
     db.insert_multiple(to_add)
     print('Saved!')
 
-    if db.clone.all() != db.table.all():
+    diff = [
+        x['nid'] for x in db.find('sale', True)
+        if not db.clone.search(
+            db._query.fragment({'nid': x['nid'], 'discount': x['discount']})
+        )
+    ]
+    to_send = [game for game in games if game.nid in diff]
+
+    if len(to_send) > 0:
         print('Sending email...')
-        mail_content = data_to_html(games)
+        mail_content = data_to_html(to_send)
         simple_mail('Switch games on sale', mail_content)
         print('Email sent!')
 
