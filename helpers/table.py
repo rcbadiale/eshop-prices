@@ -31,7 +31,7 @@ def data_to_html(games: list):
     should_return = False
     headers = ['Title', 'US + IOF', 'BR', 'Discount (%)']
     text = (
-        f'Switch games on sale:<br><br>'
+        f'New Switch games on sale today ({len(games)}):<br><br>'
         f'<br><table style="{TABLE}"><thead>'
         f'<tr style="{TR}">'
     )
