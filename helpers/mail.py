@@ -19,7 +19,7 @@ def simple_mail(subject: str, text: str):
         USERNAME,
         PASSWORD
     ).send(
-        to=EMAILS,
+        bcc=EMAILS,
         subject=subject,
         contents=text
     )
