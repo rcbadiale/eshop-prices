@@ -16,7 +16,7 @@ class Search():
         self.client = SearchClient.create(APP_ID, API_KEY)
         self.index = self.client.init_index(INDEX_NAME)
 
-    def all_games(self):
+    def all_games(self, limit=-1):
         """
         Run through multiple queries to get a full list of games available.
 
@@ -25,11 +25,14 @@ class Search():
 
         The results will be added to the property 'games_list' as a dict for
         each game found.
+
+        args:
+          limit (int): limit the number os loops to run
         """
         self.query_empty = 0
         self.query_sequence = 0
 
-        while self.query_empty < 5:
+        while self.query_empty < 5 and limit - self.query_sequence != 0:
             query = f'7001{self.query_sequence:08}'
             response = self.index.search(query).get('hits', [])
             self.query_sequence += 1
@@ -37,7 +40,7 @@ class Search():
             if len(response) > 0:
                 self.query_empty = 0
                 for each in response:
-                    art = each.get('boxart', None)
+                    art = each.get('horizontalHeaderImage', None)
                     price = each.get('lowestPrice')
                     sale = True if each.get('salePrice') else False
                     discount = round((
@@ -49,7 +52,7 @@ class Search():
                         'title': each['title'],
                         'desc': each['description'],
                         'url': f"{NINTENDO_URL}{each['url']}",
-                        'img': f"{NINTENDO_URL}{art}" if art else None,
+                        'img': f"{art}" if art else None,
                         'sale': sale,
                         'discount': discount,
                         'prices': {

@@ -1,0 +1,32 @@
+html_template = (
+    '<html><body>'
+    '<p>New Switch games on sale today ({qty})</p>'
+    '<div class="wrapper">{cards}</div>'
+    '</body>'
+    '<style>'
+    '* {{margin: 0;}}'
+    'body {{background: #fff;}}'
+    'a {{color: black;font-weight: 600;text-overflow: ellipsis}}'
+    'th, td {{font-weight: 300;}}'
+    'p {{padding: 0.5em;background-color: #eee;'
+    'box-shadow: 0 0 10px -5px black;}}'
+    '.wrapper {{columns: 15em;padding: 1em;}}'
+    '.card {{background: #eee;break-inside: avoid;margin-bottom: 0.5em;'
+    'box-shadow: 0 0 10px -5px black;border-radius: 10px;}}'
+    'img, table {{width: 100%;text-align: center;'
+    'border-radius: 10px 10px 0 0;}}'
+    '</style>'
+    '</html>'
+)
+
+card_template = (
+    '<div class="card">'
+    '<img src="{img}">'
+    '<table>'
+    '<thead>'
+    '<tr><th colspan="{length}"><a href="{url}">{title}</a></th></tr>'
+    '<tr>{headers}</tr>'
+    '</thead>'
+    '<tbody><tr>{values}</tr></tbody>'
+    '</table></div>'
+)

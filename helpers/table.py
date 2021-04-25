@@ -1,24 +1,4 @@
-# Table styling
-A = (
-    'color: black;'
-    'font-weight: bold;'
-)
-TABLE = 'border-collapse: collapse;'
-TR = (
-    'border-collapse: collapse;'
-    'border: 1px solid black;'
-)
-TD = (
-    'border-right: 1px solid black;'
-    'min-width: 2.5rem;'
-    'padding: 0 10px;'
-)
-TDCENTER = f'{TD}text-align: center;'
-TH = (
-    'border-right: 1px solid black;'
-    'min-width: 2.5rem;'
-    'padding: 0 10px;'
-)
+from helpers.template import card_template, html_template
 
 
 def data_to_html(games: list):
@@ -29,35 +9,32 @@ def data_to_html(games: list):
         games (list): List of Game Objects with prices and discounts
     """
     should_return = False
-    headers = ['Title', 'US + IOF', 'BR', 'Discount (%)']
-    text = (
-        f'New Switch games on sale today ({len(games)}):<br><br>'
-        f'<br><table style="{TABLE}"><thead>'
-        f'<tr style="{TR}">'
-    )
-    for ind in headers:
-        text += f'<th style="{TH}">{ind}</th>'
-    text += '</tr></thead><tbody>'
+    cards = ''
     for game in games:
         if game.sale:
             should_return = True
-            price_us = (
-                f'R$ {game.prices.get("US"):.2f}'
-                if game.prices.get("US") else '-'
+
+            headers_list = [
+                key.upper() if key == 'BR'
+                else f'{key.upper()} + IOF'
+                for key in game.prices.keys()
+            ]
+            headers_list.append('Discount')
+
+            headers = ''
+            for ind in headers_list:
+                headers += f'<th>{ind}</th>'
+
+            values = ''
+            for price in game.prices.values():
+                values += f'<td>{price:.2f}</td>'
+            values += f'<td>{game.discount:d}%</td>'
+
+            cards += card_template.format(
+                img=game.img, length=len(headers_list), url=game.url,
+                title=game.title, headers=headers, values=values
             )
-            price_br = (
-                f'R$ {game.prices.get("BR"):.2f}'
-                if game.prices.get("BR") else '-'
-            )
-            text += (
-                f'<tr style="{TR}">'
-                f'<td style="{TD}">'
-                f'<a style="{A}" href="{game.url}">{game.title}</a>'
-                f'</td>'
-                f'<td style="{TDCENTER}">{price_us}</td>'
-                f'<td style="{TDCENTER}">{price_br}</td>'
-                f'<td style="{TDCENTER}">{game.discount}</td>'
-                '</tr>'
-            )
-    text += '</body></html>'
-    return text if should_return else None
+
+    return html_template.format(
+        qty=len(games), cards=cards
+    ) if should_return else None
