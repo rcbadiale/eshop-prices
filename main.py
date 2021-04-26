@@ -19,7 +19,7 @@ def convert_currencies(cc: CurrencyConverter, game: Game):
     }
 
 
-def multiply_iof(game: Game, ignored_stores: list = ['BR']):
+def multiply_iof(game: Game, ignored_stores: list = ['br']):
     """
     Add taxes to the converted prices.
 
@@ -28,7 +28,7 @@ def multiply_iof(game: Game, ignored_stores: list = ['BR']):
         ignored_stores (list): stores to be ignored
     """
     for store, price in game.prices.items():
-        if store in ignored_stores:
+        if store.lower() not in ignored_stores:
             game.prices[store] = round(price * TAX, 2) if price else None
 
 
