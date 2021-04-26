@@ -21,10 +21,9 @@ html_template = (
 
 card_template = (
     '<div class="card">'
-    '<img src="{img}">'
+    '<a href="{url}"><img alt="{title}" src="{img}"></a>'
     '<table>'
     '<thead>'
-    '<tr><th colspan="{length}"><a href="{url}">{title}</a></th></tr>'
     '<tr>{headers}</tr>'
     '</thead>'
     '<tbody><tr>{values}</tr></tbody>'

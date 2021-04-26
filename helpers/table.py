@@ -31,8 +31,8 @@ def data_to_html(games: list):
             values += f'<td>{game.discount:d}%</td>'
 
             cards += card_template.format(
-                img=game.img, length=len(headers_list), url=game.url,
-                title=game.title, headers=headers, values=values
+                img=game.img, url=game.url, title=game.title,
+                headers=headers, values=values
             )
 
     return html_template.format(
