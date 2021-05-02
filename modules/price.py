@@ -55,7 +55,7 @@ def get_price_store(games: list, country: str):
 
     price_nid = {}
     for nids_as_str in nids_list:
-        price_nid.update(call_eshop_api(nids_as_str, country))
+        price_nid.update(call_eshop_api(nids_as_str, country.upper()))
 
     for game in games:
         if price_nid.get(game.nid):

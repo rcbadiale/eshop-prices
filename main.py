@@ -1,8 +1,21 @@
+from configparser import ConfigParser
+from os import getcwd
 from time import time
 
-from config import CURRENCY, DB_PATH, STORES_CURRENCY, STORES_GET, TAX
 from helpers import CurrencyConverter, data_to_html, simple_mail
-from modules import DB, Game, get_price_store, Search
+from modules import DB, Game, Search, get_price_store
+
+# Set configurations
+config = ConfigParser()
+config.read(f'{getcwd()}/config.ini')
+
+STORE = config.get('base', 'store')
+EMAILS = list(config.get('base', 'emails').split(','))
+DB_PATH = config.get('base', 'db_path')
+STORES_CURRENCY = dict(config.items('stores_currency'))
+STORES_GET = list(config.get('base', 'stores_get').split(','))
+TAX = config.getfloat('base', 'tax')
+CURRENCY = STORES_CURRENCY.get(STORE)
 
 
 def convert_currencies(cc: CurrencyConverter, game: Game):
@@ -14,12 +27,12 @@ def convert_currencies(cc: CurrencyConverter, game: Game):
         game: Game object which the prices will be converted to base currency
     """
     game.prices = {
-        store: cc.calc(value, STORES_CURRENCY.get(store))
+        store: cc.calc(value, STORES_CURRENCY.get(store.lower()))
         if value else None for store, value in game.prices.items()
     }
 
 
-def multiply_iof(game: Game, ignored_stores: list = ['br']):
+def multiply_tax(game: Game, ignored_stores: list = ['br']):
     """
     Add taxes to the converted prices.
 
@@ -34,14 +47,14 @@ def multiply_iof(game: Game, ignored_stores: list = ['br']):
 
 def main():
     """
-    Main code to be ran.
+    Main code to run.
     """
     cc = CurrencyConverter(CURRENCY)
     db = DB(DB_PATH)
     search = Search()
 
     print('Searching all games...')
-    search.all_games()
+    search.all_games(limit)
     games = [Game(**each) for each in search.games_list]
     for store in STORES_GET:
         print(f'Getting prices from {store} store...')
@@ -51,7 +64,7 @@ def main():
     print('Converting prices and adding taxes...')
     for game in games:
         convert_currencies(cc, game)
-        multiply_iof(game)
+        multiply_tax(game)
         to_add.append(game.__dict__)
 
     print('Saving to DB...')
@@ -68,8 +81,8 @@ def main():
 
     if len(to_send) > 0:
         print('Sending email...')
-        mail_content = data_to_html(to_send)
-        simple_mail('Switch games on sale', mail_content)
+        mail_content = data_to_html(to_send, STORE)
+        simple_mail('Switch games on sale', EMAILS, mail_content)
         print('Email sent!')
 
 

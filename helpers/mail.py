@@ -1,17 +1,16 @@
 from datetime import date
 
 import yagmail
-
-from config import EMAILS
 from credentials import PASSWORD, USERNAME
 
 
-def simple_mail(subject: str, text: str):
+def simple_mail(subject: str, to: list, text: str):
     """
     Simple mail sender function.
 
     args:
         subject (str): email subject
+        to (list): a list of emails
         text (str): email content (HTML / TEXT)
     """
     subject = f'[{date.today()}] {subject}'
@@ -19,7 +18,7 @@ def simple_mail(subject: str, text: str):
         USERNAME,
         PASSWORD
     ).send(
-        bcc=EMAILS,
+        bcc=to,
         subject=subject,
         contents=text
     )

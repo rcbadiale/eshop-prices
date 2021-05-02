@@ -1,12 +1,16 @@
-from helpers.template import card_template, html_template
+from helpers.template import card_template, content_template, html_template
+
+TAX_NAME = 'IOF'
+PRICE_UNIT = 'R$'
 
 
-def data_to_html(games: list):
+def data_to_html(games: list, store: str):
     """
     Convert games data into a HTML Table for the email.
 
     args:
         games (list): List of Game Objects with prices and discounts
+        store (str): Base store
     """
     should_return = False
     cards = ''
@@ -14,25 +18,20 @@ def data_to_html(games: list):
         if game.sale:
             should_return = True
 
-            headers_list = [
-                key.upper() if key == 'BR'
-                else f'{key.upper()} + IOF'
-                for key in game.prices.keys()
-            ]
-            headers_list.append('Discount')
-
-            headers = ''
-            for ind in headers_list:
-                headers += f'<th>{ind}</th>'
-
-            values = ''
-            for price in game.prices.values():
-                values += f'<td>{price:.2f}</td>'
-            values += f'<td>{game.discount:d}%</td>'
+            content = ''
+            for key, price in game.prices.items():
+                content += content_template.format(
+                    store=(
+                        key.upper() if key.lower() == store.lower()
+                        else f'{key.upper()} + {TAX_NAME}'
+                    ),
+                    unit=PRICE_UNIT,
+                    price=price
+                )
 
             cards += card_template.format(
                 img=game.img, url=game.url, title=game.title,
-                headers=headers, values=values
+                content=content, discount=game.discount
             )
 
     return html_template.format(
