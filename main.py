@@ -54,7 +54,7 @@ def main():
     search = Search()
 
     print('Searching all games...')
-    search.all_games(limit)
+    search.all_games()
     games = [Game(**each) for each in search.games_list]
     for store in STORES_GET:
         print(f'Getting prices from {store} store...')
